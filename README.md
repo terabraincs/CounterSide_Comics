@@ -2,7 +2,7 @@
 ## 출처
 - KOR `https://game.naver.com/lounge/COUNTERSIDE`
 - JPN/ENG `https://www.counterside.com/`
-- 
+
 ## 주의사항
 이 프로젝트는 자료를 소유하지 않고 권리를 주장하지 않습니다.  
 모든 권리는 studiobside등의 자료의 정당한 소유자에게 있습니다.   
