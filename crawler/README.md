@@ -73,6 +73,22 @@ python .\naver_lounge_crawler.py `
   --no-pins
 ```
 
+### 메타데이터만 저장
+
+`--metadata-only`를 사용하면 본문 이미지를 내려받지 않고 JSON·CSV 메타데이터만 저장합니다. 기존 제목별 이미지 폴더와 연결할 수 있도록 각 게시글에 `title_folder`도 기록합니다.
+
+```powershell
+python .\naver_lounge_crawler.py `
+  --lounge COUNTERSIDE `
+  --board-id 24 `
+  --all `
+  --no-pins `
+  --metadata-only `
+  --output-dir ".\KOR\metadata\공식 웹툰"
+```
+
+카운터사이드 라운지의 가이드 웹툰은 게시판 ID `23`, 공식 웹툰은 게시판 ID `24`입니다. `--metadata-only`는 `--download-images` 및 `--images-only`와 함께 사용할 수 없습니다.
+
 ### 이미지 다운로드
 
 일반 출력과 함께 본문 이미지를 내려받습니다.
@@ -133,7 +149,7 @@ JSON 파일은 수집 정보인 `metadata`와 게시글 배열인 `posts`로 구
 - 글 번호와 원본 주소
 - 라운지 ID와 이름
 - 게시판 ID와 이름
-- 제목과 작성자 정보
+- 제목, 기존 제목별 폴더명과 작성자 정보
 - 작성일과 수정일
 - 조회수와 댓글 수
 - 버프·너프 수
@@ -158,6 +174,7 @@ CSV는 표 계산 프로그램에서 다루기 쉬운 평면 형태로 저장됩
 | `--output-dir` | 결과 저장 폴더 | `output` |
 | `--format` | `json`, `csv`, `both` 중 선택 | `both` |
 | `--download-images` | 본문 이미지 다운로드 | 사용 안 함 |
+| `--metadata-only` | 이미지를 제외하고 JSON·CSV 메타데이터만 저장 | 사용 안 함 |
 | `--title-folders` | 게시글 제목별 이미지 폴더 사용 | 사용 안 함 |
 | `--images-only` | JSON·CSV를 만들지 않음 | 사용 안 함 |
 | `--delay` | 요청 사이 대기 시간(초) | `0.5` |

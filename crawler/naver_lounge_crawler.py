@@ -478,6 +478,14 @@ def build_title_folder_names(posts: Sequence[dict[str, Any]]) -> dict[int, str]:
     return names
 
 
+def assign_title_folder_names(posts: Sequence[dict[str, Any]]) -> None:
+    """메타데이터에서 기존 제목별 이미지 폴더를 찾을 수 있게 이름을 기록한다."""
+
+    names = build_title_folder_names(posts)
+    for post in posts:
+        post["title_folder"] = names[int(post["feed_id"])]
+
+
 def image_filename(url: str, index: int, total: int, content_type: str = "") -> str:
     """이미지 수와 관계없이 1, 2, 3 형식의 파일명을 만든다."""
 
@@ -564,6 +572,7 @@ CSV_FIELDS = [
     "board_id",
     "board_name",
     "title",
+    "title_folder",
     "author",
     "author_level",
     "created_at",
@@ -639,6 +648,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--download-images", action="store_true", help="본문 이미지를 원본 크기로 저장")
     parser.add_argument(
+        "--metadata-only",
+        action="store_true",
+        help="본문 이미지를 내려받지 않고 JSON/CSV 메타데이터만 저장",
+    )
+    parser.add_argument(
         "--title-folders",
         action="store_true",
         help="게시글 제목 폴더 안에 1, 2, 3 이름으로 이미지 저장",
@@ -666,6 +680,10 @@ def _validate_args(parser: argparse.ArgumentParser, args: argparse.Namespace) ->
         parser.error("--timeout은 0보다 커야 합니다.")
     if args.retries < 0:
         parser.error("--retries는 0 이상이어야 합니다.")
+    if args.metadata_only and args.download_images:
+        parser.error("--metadata-only와 --download-images는 함께 사용할 수 없습니다.")
+    if args.metadata_only and args.images_only:
+        parser.error("--metadata-only와 --images-only는 함께 사용할 수 없습니다.")
     if args.title_folders and not args.download_images:
         parser.error("--title-folders는 --download-images와 함께 사용해야 합니다.")
     if args.images_only and not args.download_images:
@@ -690,6 +708,8 @@ def run(args: argparse.Namespace) -> int:
     )
     image_count = sum(len(post["images"]) for post in posts)
     print(f"수집 완료: 게시글 {len(posts)}개, 본문 이미지 {image_count}개")
+
+    assign_title_folder_names(posts)
 
     for post in posts[:5]:
         pin = "[고정] " if post["is_pinned"] else ""
@@ -721,6 +741,7 @@ def run(args: argparse.Namespace) -> int:
         "collected_at": datetime.now(KST).isoformat(),
         "collected_count": len(posts),
         "available_regular_posts": client.last_total_count,
+        "metadata_only": args.metadata_only,
         "downloaded_images": downloaded,
         "failed_images": failed,
     }
